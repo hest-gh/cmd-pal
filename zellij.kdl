@@ -1,0 +1,12 @@
+layout {
+    cwd "."
+    pane size=1 borderless=true {
+        plugin location="tab-bar"
+    }
+     pane command="watchexec" {
+       args "--watch" "/YOUR-PATH/cmd-pal/" "cargo build && zellij action start-or-reload-plugin file:target/wasm32-wasi/debug/cmd-pal.wasm"
+        }
+    pane size=1 borderless=true {
+        plugin location="status-bar"
+    } 
+}

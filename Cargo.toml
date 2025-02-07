@@ -1,0 +1,10 @@
+[package]
+name = "cmd-pal"
+version = "0.1.0"
+authors = ["hest"]
+edition = "2021"
+
+[dependencies]
+zellij-tile = "0.41.2"
+zellij-utils = "0.41.2"
+owo-colors = "4.1.0"
