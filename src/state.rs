@@ -2,9 +2,6 @@ use super::fuzzer;
 use super::RenderMode;
 use super::State;
 
-use owo_colors::OwoColorize;
-use zellij_tile::shim::*;
-
 impl State {
     pub fn fuzz(&mut self) {
         self.selected_cmd = 0;
@@ -65,125 +62,6 @@ impl State {
     pub fn error_msg(&mut self, msg: String) {
         self.render_mode = RenderMode::Message;
         self.message_content = msg;
-    }
-
-    pub fn message_render(&mut self) {
-        println!(
-            "{} {}",
-            ">".cyan().bold(),
-            self.message_content.to_string().cyan().bold()
-        );
-    }
-
-    pub fn input_render(&mut self) {
-        println!(
-            "{} {}",
-            ">".cyan().bold(),
-            if self.cmd_input.is_empty() {
-                format!(
-                    "{} {}",
-                    self.fuzzed_commands[self.selected_cmd].0,
-                    ": _".cyan().bold()
-                )
-            } else {
-                format!(
-                    "{}{}{}",
-                    self.fuzzed_commands[self.selected_cmd].0, ": ", self.cmd_input
-                )
-                .cyan()
-                .bold()
-                .to_string()
-            }
-        );
-    }
-
-    pub fn select_render(&mut self, row: usize, _cols: usize) {
-        let (first, last) = if self.option_selection.len() >= row {
-            let count = row.saturating_sub(3);
-            let first = self.selected_option.saturating_sub(count / 2);
-            let last = first + count;
-            (first, last)
-        } else {
-            let first = 0;
-            let last = self.option_selection.len();
-            (first, last)
-        };
-
-        let mut table = Table::new().add_row(vec![" ", " "]);
-        for i in first..last {
-            if i >= self.option_selection.len() {
-                continue;
-            }
-
-            if i == self.selected_option {
-                table = table.add_styled_row(vec![
-                    Text::new(format!("{}", "->".red())),
-                    Text::new(&self.option_selection[i]),
-                ]);
-            } else {
-                table = table.add_styled_row(vec![
-                    Text::new(format!("{}", "->".green())),
-                    Text::new(&self.option_selection[i]),
-                ]);
-            }
-        }
-
-        print_table(table);
-    }
-
-    pub fn normal_render(&mut self, row: usize, _cols: usize) {
-        println!(
-            "{} {}",
-            ">".cyan().bold(),
-            if self.search_input.is_empty() {
-                format!("{} {}", self.selected_cmd, "Search: _".cyan().bold(),)
-            } else {
-                format!("{}{}", "Search: ", self.search_input)
-                    .cyan()
-                    .bold()
-                    .to_string()
-            }
-        );
-
-        let mut table = Table::new().add_row(vec![" ", " "]);
-
-        if self.search_input.is_empty() {
-            self.fuzzed_commands.clear();
-            for i in &self.commands {
-                self.fuzzed_commands.push((i.clone(), 0.0));
-            }
-        }
-
-        let (first, last) = if self.fuzzed_commands.len() >= row {
-            let count = row.saturating_sub(3);
-            let first = self.selected_cmd.saturating_sub(count / 2);
-            let last = first + count;
-            (first, last)
-        } else {
-            let first = 0;
-            let last = self.fuzzed_commands.len();
-            (first, last)
-        };
-
-        for i in first..last {
-            if i >= self.fuzzed_commands.len() {
-                continue;
-            }
-
-            if i == self.selected_cmd {
-                table = table.add_styled_row(vec![
-                    Text::new(format!("{}", "->".red())),
-                    Text::new(&self.fuzzed_commands[i].0),
-                ]);
-            } else {
-                table = table.add_styled_row(vec![
-                    Text::new(format!("{}", "->".green())),
-                    Text::new(&self.fuzzed_commands[i].0),
-                ]);
-            }
-        }
-
-        print_table(table);
     }
 
     pub fn update_tile(&mut self) {

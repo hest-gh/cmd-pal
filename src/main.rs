@@ -1,10 +1,10 @@
 pub mod commands;
 pub mod fuzzer;
 pub mod state;
+pub mod ui;
 
 use commands::{get_by_name, CmdGroup};
 use std::collections::BTreeMap;
-use std::env::current_dir;
 use std::path::Path;
 use std::str::FromStr;
 use zellij_tile::prelude::*;
@@ -261,10 +261,26 @@ impl ZellijPlugin for State {
 
     fn render(&mut self, rows: usize, cols: usize) {
         match self.render_mode {
-            RenderMode::Normal => self.normal_render(rows, cols),
-            RenderMode::Input => self.input_render(),
-            RenderMode::Message => self.message_render(),
-            RenderMode::OptionSelect => self.select_render(rows, cols),
+            RenderMode::Normal => ui::normal_render(
+                &self.search_input,
+                self.selected_cmd,
+                self.fuzzed_commands.clone(),
+                &self.commands,
+                rows,
+                cols,
+            ),
+            RenderMode::Input => ui::input_render(
+                self.selected_cmd,
+                self.cmd_input.clone(),
+                self.fuzzed_commands.clone(),
+            ),
+            RenderMode::Message => ui::message_render(self.message_content.clone()),
+            RenderMode::OptionSelect => ui::select_render(
+                self.option_selection.clone(),
+                self.selected_option,
+                rows,
+                cols,
+            ),
         }
     }
 }
