@@ -12,9 +12,10 @@ impl State {
         match self.render_mode {
             RenderMode::Normal => {
                 if self.fuzzed_commands.is_empty() {
-                    return;
+                    self.selected_cmd = (self.selected_cmd + 1) % self.commands.len();
+                } else {
+                    self.selected_cmd = (self.selected_cmd + 1) % self.fuzzed_commands.len();
                 }
-                self.selected_cmd = (self.selected_cmd + 1) % self.fuzzed_commands.len();
             }
             RenderMode::OptionSelect => {
                 if self.option_selection.is_empty() {
@@ -29,7 +30,8 @@ impl State {
     pub fn select_up(&mut self) {
         match self.render_mode {
             RenderMode::Normal => {
-                if self.fuzzed_commands.is_empty() {
+                if self.fuzzed_commands.is_empty() && self.selected_cmd == 0 {
+                    self.selected_cmd = self.commands.len() - 1;
                     return;
                 }
                 if self.selected_cmd == 0 {

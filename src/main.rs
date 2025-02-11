@@ -263,7 +263,7 @@ impl ZellijPlugin for State {
         match self.render_mode {
             RenderMode::Normal => ui::normal_render(
                 &self.search_input,
-                self.selected_cmd,
+                &self.selected_cmd,
                 self.fuzzed_commands.clone(),
                 &self.commands,
                 rows,

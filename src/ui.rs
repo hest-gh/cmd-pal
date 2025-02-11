@@ -1,6 +1,8 @@
 use owo_colors::OwoColorize;
 
 use zellij_tile::prelude::*;
+
+use crate::commands;
 pub fn input_render(selected_cmd: usize, cmd_input: String, fuzzed_commands: Vec<(String, f32)>) {
     println!(
         "{} {}",
@@ -71,7 +73,7 @@ pub fn select_render(
 
 pub fn normal_render(
     search_input: &String,
-    selected_cmd: usize,
+    selected_cmd: &usize,
     mut fuzzed_commands: Vec<(String, f32)>,
     commands: &Vec<String>,
     row: usize,
@@ -115,7 +117,7 @@ pub fn normal_render(
             continue;
         }
 
-        if i == selected_cmd {
+        if &i == selected_cmd {
             table = table.add_styled_row(vec![
                 Text::new(format!("{}", "->".red())),
                 Text::new(&fuzzed_commands[i].0),
@@ -130,5 +132,5 @@ pub fn normal_render(
     table = table.add_row(vec![" ", " "]);
 
     print_table(table);
-    print_text_with_coordinates(Text::new("<↓↑>/<ENTER>/<ESC>"), 0, row, None, None)
+    print_text_with_coordinates(Text::new(selected_cmd.to_string()), 0, row, None, None)
 }
